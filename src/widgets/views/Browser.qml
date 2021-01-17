@@ -80,7 +80,7 @@ Item
     SplitView
     {
         anchors.fill: parent
-        anchors.bottomMargin: _selectionBar.visible && (terminalVisible | _stackView.depth == 2) ? _selectionBar.height : 0
+        anchors.bottomMargin: selectionBar.visible && (terminalVisible | _stackView.depth == 2) ? selectionBar.height : 0
         spacing: 0
         orientation: Qt.Vertical
 
@@ -138,7 +138,7 @@ Item
                               default: return Math.floor(96 * 1.5);
                               }
 
-                listItemSize:   switch(appSettings.listSize)
+                listItemSize:   switch(1)
                                 {
                                 case 0: return 32;
                                 case 1: return 48;

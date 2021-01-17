@@ -34,6 +34,9 @@
 
 #include "controllers/compressedfile.h"
 #include "controllers/filepreviewer.h"
+#include "controllers/dirinfo.h"
+
+#include "models/recentfilesmodel.h"
 
 #define INDEX_URI "org.maui.index"
 
@@ -60,9 +63,12 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     app.setWindowIcon(QIcon(":/index.png"));
     MauiApp::instance()->setHandleAccounts(false); // for now index can not handle cloud accounts
     MauiApp::instance()->setIconName("qrc:/assets/index.svg");
+    MauiApp::instance()->setEnableCSD(true);
 
     KLocalizedString::setApplicationDomain("index");
-    KAboutData about(QStringLiteral("index"), i18n("Index"), INDEX_VERSION_STRING, i18n("Index allows you to navigate your computer and preview multimedia files."), KAboutLicense::LGPL_V3, i18n("© 2019-2020 Nitrux Development Team"));
+
+    KAboutData about(QStringLiteral("index"), i18n("Index"), INDEX_VERSION_STRING, i18n("Index allows you to navigate your computer and preview multimedia files."),
+                     KAboutLicense::LGPL_V3, i18n("© 2019-%1 Nitrux Development Team", QString::number(QDate::currentDate().year())));
     about.addAuthor(i18n("Camilo Higuita"), i18n("Developer"), QStringLiteral("milo.h@aol.com"));
     about.addAuthor(i18n("Gabriel Dominguez"), i18n("Developer"), QStringLiteral("gabriel@gabrieldominguez.es"));
     about.setHomepage("https://mauikit.org");
@@ -104,6 +110,8 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("inx", &index);
     qmlRegisterType<CompressedFile>(INDEX_URI, 1, 0, "CompressedFile");
     qmlRegisterType<FilePreviewer>(INDEX_URI, 1, 0, "FilePreviewProvider");
+    qmlRegisterType<RecentFilesModel>(INDEX_URI, 1, 0, "RecentFiles");
+    qmlRegisterType<DirInfo>(INDEX_URI, 1, 0, "DirInfo");
 
     engine.load(url);
 

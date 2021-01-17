@@ -18,6 +18,7 @@ Maui.SideBar
 
     signal placeClicked (string path)
 
+    padding: 0
     collapsible: true
     collapsed : !root.isWide
     preferredWidth: Math.min(Kirigami.Units.gridUnit * (Maui.Handy.isWindows ?  15 : 11), root.width)
@@ -29,6 +30,72 @@ Maui.SideBar
             placesSidebar.collapse()
     }
 
+    listView.flickable.header: Maui.ToolBar
+    {
+        background: null
+        width: parent.width
+        rightContent: ToolButton
+        {
+            id: _optionsButton
+            icon.name: "overflow-menu"
+            enabled: root.currentBrowser && root.currentBrowser.currentFMList.pathType !== Maui.FMList.TAGS_PATH && root.currentBrowser.currentFMList.pathType !== Maui.FMList.TRASH_PATH && root.currentBrowser.currentFMList.pathType !== Maui.FMList.APPS_PATH
+            onClicked:
+            {
+                if(currentBrowser.browserMenu.visible)
+                    currentBrowser.browserMenu.close()
+                else
+                    currentBrowser.browserMenu.show(_optionsButton, 0, height)
+            }
+            checked: currentBrowser.browserMenu.visible
+            checkable: false
+        }
+
+        farLeftContent:  MouseArea
+        {
+            id: _handle
+            visible: placesSidebar.position == 0 || placesSidebar.collapsed
+            Layout.preferredWidth: Maui.Style.iconSizes.big
+            Layout.fillHeight: true
+            Layout.alignment: Qt.AlignBottom
+            hoverEnabled: true
+            preventStealing: true
+            propagateComposedEvents: false
+
+            ToolTip.delay: 1000
+            ToolTip.timeout: 5000
+            ToolTip.visible: _handle.containsMouse || _handle.containsPress
+            ToolTip.text: i18n("Toogle SideBar")
+
+            Rectangle
+            {
+                anchors.centerIn: parent
+                radius: 2
+                height: 18
+                width: 16
+
+                color: _handle.containsMouse || _handle.containsPress  ?  Kirigami.Theme.highlightColor : Kirigami.Theme.textColor
+                border.color: Qt.darker(color, 1.2)
+
+                Rectangle
+                {
+                    radius: 1
+                    height: 10
+                    width: 3
+
+                    anchors.left: parent.left
+                    anchors.verticalCenter: parent.verticalCenter
+                    anchors.margins: 4
+
+                    color: _handle.containsMouse || _handle.containsPress ?  Kirigami.Theme.highlightedTextColor : Kirigami.Theme.backgroundColor
+                }
+            }
+
+            onClicked: placesSidebar.visible = !placesSidebar.visible
+        }
+
+
+    }
+
     model: Maui.BaseModel
     {
         list: Maui.PlacesList
@@ -36,11 +103,11 @@ Maui.SideBar
             id: placesList
 
             groups: [
-                    Maui.FMList.QUICK_PATH,
-                    Maui.FMList.PLACES_PATH,
-                    Maui.FMList.REMOTE_PATH,
-                    Maui.FMList.REMOVABLE_PATH,
-                    Maui.FMList.DRIVES_PATH]
+                Maui.FMList.QUICK_PATH,
+                Maui.FMList.PLACES_PATH,
+                Maui.FMList.REMOTE_PATH,
+                Maui.FMList.REMOVABLE_PATH,
+                Maui.FMList.DRIVES_PATH]
 
             onBookmarksChanged:
             {
@@ -51,8 +118,8 @@ Maui.SideBar
 
     delegate: Maui.ListDelegate
     {
-        id: itemDelegate
         width: ListView.view.width
+        implicitHeight: Maui.Style.rowHeight * 1.2
         iconSize: Maui.Style.iconSizes.small
         label: model.label
         count: model.count > 0 ? model.count : ""
@@ -89,7 +156,8 @@ Maui.SideBar
         id: delegate
         width: control.width
         label: section
-        labelTxt.font.pointSize: Maui.Style.fontSizes.big
+        labelTxt.font.pointSize: 16
+        labelTxt.font.bold: true
         isSection: true
         height: Maui.Style.toolBarHeightAlt
     }
